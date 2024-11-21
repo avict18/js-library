@@ -148,14 +148,14 @@ app.get('/files', (req, res) => {
                CS Library
               </p>
               <div>
-                <p class="text-3xl font-bold mb-2">Statistics</p>
-                <ul class="text-lg">
-                  <li>Total files: <span class="text-blue-500 font-bold">${stats.total}</span></li>
-                  <li>Images: <span class="text-blue-500 font-bold">${stats.images}</span></li>
-                  <li>PDFs: <span class="text-red-500 font-bold">${stats.pdf}</span></li>
-                  <li>Word documents: <span class="text-blue-500 font-bold">${stats.word}</span></li>
-                  <li>PPTs: <span class="text-teal-500 font-bold">${stats.ppt}</span></li>
-                  <li>Others: <span class="text-gray-500 font-bold">${stats.others}</span></li>
+                <p class="text-3xl font-bold bg-gradient-to-r from-blue-500 via-purple-500 to-red-500 bg-clip-text text-transparent mb-2">Statistics</p>
+                <ul class="text-lg font-mono text-white w-full">
+                  <li class="flex justify-between"><span>Total: </span><span class="text-blue-500 font-bold">${stats.total}</span></li>
+                  <li class="flex justify-between"><span>Images: </span><span class="text-blue-500 font-bold">${stats.images}</span></li>
+                  <li class="flex justify-between"><span>PDFs: </span><span class="text-red-500 font-bold">${stats.pdf}</span></li>
+                  <li class="flex justify-between"><span>Word:</span> <span class="text-blue-500 font-bold">${stats.word}</span></li>
+                  <li class="flex justify-between"><span>PPTs:</span> <span class="text-teal-500 font-bold">${stats.ppt}</span></li>
+                  <li class="flex justify-between"><span>Others:</span> <span class="text-gray-500 font-bold">${stats.others}</span></li>
                 </ul>
               </div>
               <div>
@@ -172,7 +172,7 @@ app.get('/files', (req, res) => {
                   </a>
                 </button>
                 <p class="font-bold text-xl text-white mt-3">UPLOADED FILES</p>
-                <p class="text-xl font-bold bg-gradient-to-r from-blue-500 via-purple-500 to-red-500 bg-clip-text text-transparent m-3">
+                <p class="text-xl font-bold bg-gradient-to-r from-blue-500 via-purple-500 to-red-500 bg-clip-text text-transparent m-3 hover:bg-gradient-to-r hover:from-red-500 hover:to-blue-500 hover:via-purple-500 transition transition-all duration-400">
                   Wences & Avict18
                 </p>
               </div>
