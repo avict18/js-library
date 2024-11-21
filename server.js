@@ -15,9 +15,12 @@ const upload = multer({
 app.use(express.static('public')); // For general static files (like JS or images)
 app.use(express.static('styling')); // Serve CSS files from 'styling' folder
 
+// Serve node_modules statically to access Chart.js
+app.use('/node_modules/chart.js', express.static(path.join(__dirname, 'node_modules/chart.js')));
+
+
 // Handle file upload and store original filenames
 app.post('/upload', upload.single('file'), (req, res) => {
-  // The original filename
   const originalName = req.file.originalname;
 
   // Move the file to its correct location with the original name
@@ -25,7 +28,6 @@ app.post('/upload', upload.single('file'), (req, res) => {
   fs.rename(req.file.path, newPath, (err) => {
     if (err) return res.status(500).send('Error moving file: ' + err);
 
-    // Redirect to the files page
     res.redirect('/files');
   });
 });
@@ -37,57 +39,79 @@ app.get('/files', (req, res) => {
       return res.status(500).send('Unable to scan directory: ' + err);
     }
 
-    // Map files to the consistent card structure
-    let fileCards = files.map(file => {
+    // Statistics calculation
+    const stats = {
+      total: files.length,
+      pdf: 0,
+      word: 0,
+      images: 0,
+      ppt: 0,
+      others: 0,
+    };
+
+    files.forEach(file => {
+      const fileType = path.extname(file).toLowerCase();
+      if (['.jpg', '.png', '.gif', '.webp', '.jfif'].includes(fileType)) {
+        stats.images++;
+      } else if (fileType === '.pdf') {
+        stats.pdf++;
+      } else if (['.docx', '.doc'].includes(fileType)) {
+        stats.word++;
+      } else if (['.pptx', '.ppt'].includes(fileType)) {
+        stats.ppt++;
+      } else {
+        stats.others++;
+      }
+    });
+
+    const fileCards = files.map(file => {
       const filePath = `/uploads/${file}`;
       const fileType = path.extname(file).toLowerCase();
 
-      // Set the status text and color based on file extension
       let statusText = 'Unknown';
-      let statusColor = 'bg-gray-500'; // Default color
+      let statusColor = 'bg-gray-500';
 
-      if (['.jpg', '.png', '.gif', '.webp','.jfif'].includes(fileType)) {
+      if (['.jpg', '.png', '.gif', '.webp', '.jfif'].includes(fileType)) {
         statusText = 'Image';
-        statusColor = 'bg-blue-500'; // Blue for image files
+        statusColor = 'bg-blue-500';
       } else if (fileType === '.xlsx') {
         statusText = 'Spreadsheet';
-        statusColor = 'bg-green-500'; // Green for Excel files
+        statusColor = 'bg-green-500';
       } else if (fileType === '.css') {
         statusText = 'CSS';
-        statusColor = 'bg-cyan-500'; // White for CSS files
+        statusColor = 'bg-cyan-500';
       } else if (fileType === '.js') {
         statusText = 'JavaScript';
-        statusColor = 'bg-yellow-500'; // Yellow for JS files
+        statusColor = 'bg-yellow-500';
       } else if (fileType === '.docx') {
         statusText = 'Document';
-        statusColor = 'bg-blue-500'; // Blue for Word documents
+        statusColor = 'bg-blue-500';
       } else if (fileType === '.html') {
         statusText = 'HTML';
-        statusColor = 'bg-orange-500'; // Orange for HTML files
+        statusColor = 'bg-orange-500';
       } else if (fileType === '.zip') {
         statusText = 'ZIP';
-        statusColor = 'bg-yellow-500'; // Yellow for ZIP files
-      } else if (fileType === '.pdf'){
+        statusColor = 'bg-yellow-500';
+      } else if (fileType === '.pdf') {
         statusText = 'PDF';
         statusColor = 'bg-red-500';
       } else if (fileType === '.7z') {
         statusText = '7z';
-        statusColor = 'bg-red-500'; // Yellow for ZIP files
-      }else if (fileType === '.exe') {
+        statusColor = 'bg-red-500';
+      } else if (fileType === '.exe') {
         statusText = 'EXE';
-        statusColor = 'bg-teal-500'; // Yellow for ZIP files
-      }else if (fileType === '.pptx'|| fileType === '.pptx') {
+        statusColor = 'bg-teal-500';
+      } else if (['.pptx', '.ppt'].includes(fileType)) {
         statusText = 'PPT';
-        statusColor = 'bg-teal-500'; // Yellow for ZIP files
-      }else if (fileType === '.cpp') {
+        statusColor = 'bg-teal-500';
+      } else if (fileType === '.cpp') {
         statusText = 'CPP';
-        statusColor = 'bg-blue-500'; // Yellow for ZIP files
+        statusColor = 'bg-blue-500';
       }
 
-      // Return the consistent card design with color-coding
-      return `  
+      return `
         <div>
-          <div class="bg-zinc-800  h-40 w-80 rounded-2xl p-3 shadow-md flex flex-col justify-between">
+          <div class="bg-zinc-800 h-40 w-80 rounded-2xl p-3 shadow-md flex flex-col justify-between">
             <div class="flex justify-between">
               <div class="border-4 rounded-3xl p-1 ${statusColor} flex items-center space-x-1">
                 <svg width="24" height="24" class="text-white">
@@ -106,9 +130,8 @@ app.get('/files', (req, res) => {
           </div>
         </div>
       `;
-    }).join(''); // Join the file cards into a single string
+    }).join('');
 
-    // Send the HTML response
     res.send(`
       <html>
         <head>
@@ -116,43 +139,65 @@ app.get('/files', (req, res) => {
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <link href="http://192.168.8.45:3000/style.css" rel="stylesheet">
           <title>CS Library</title>
+          <script src="/node_modules/chart.js/dist/chart.min.js"></script>
         </head>
-        <body class="bg-gray-900 overflow-hidden">
-          <div class="flex h-screen w-screen transition-all duration-200 max-h-screen" x-data="{ open: true }">
-            <!-- Sidebar -->
-            <div class="bg-black transition-all duration-200 h-screen overflow-hidden w-1/5">
-              <p class="p-4 text-center text-white text-3xl font-semibold">
-                <span class="text-red-600">CS</span> <span class="text-blue-500">Library</span>
+        <body class="bg-gray-900 min-h-screen overflow-auto">
+          <div class="flex h-screen w-screen">
+            <aside class="bg-black h-screen overflow-hidden w-1/5 flex flex-col items-center p-4 text-white justify-between">
+              <p class="text-3xl font-bold bg-gradient-to-r from-blue-500 via-purple-500 to-red-500 bg-clip-text text-transparent m-3">
+               CS Library
               </p>
-            </div>
-
-            <!-- Content Area -->
-            <div class="relative flex flex-col w-full">
-              <!-- back Button -->
+              <div>
+                <p class="text-3xl font-bold mb-2">Statistics</p>
+                <ul class="text-lg">
+                  <li>Total files: <span class="text-blue-500 font-bold">${stats.total}</span></li>
+                  <li>Images: <span class="text-blue-500 font-bold">${stats.images}</span></li>
+                  <li>PDFs: <span class="text-red-500 font-bold">${stats.pdf}</span></li>
+                  <li>Word documents: <span class="text-blue-500 font-bold">${stats.word}</span></li>
+                  <li>PPTs: <span class="text-teal-500 font-bold">${stats.ppt}</span></li>
+                  <li>Others: <span class="text-gray-500 font-bold">${stats.others}</span></li>
+                </ul>
+              </div>
+              <div>
+                <canvas id="fileStatsChart" width="200" height="200"></canvas>
+              </div>
+            </aside>
+            <div class="relative flex flex-col w-full max-h-screen">
               <div class="flex justify-between">
-                <button class="text-white p-4 ml-2 font-bold" @click="open = !open">
+                <button class="text-white p-4 ml-2 font-bold">
                   <a href="/">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
                     </svg>
-
                   </a>
                 </button>
                 <p class="font-bold text-xl text-white mt-3">UPLOADED FILES</p>
-                <p class="font-bold text-xl text-white m-3">by AVICT-18</p>
+                <p class="text-xl font-bold bg-gradient-to-r from-blue-500 via-purple-500 to-red-500 bg-clip-text text-transparent m-3">
+                  Wences & Avict18
+                </p>
               </div>
-
-              <!-- File Cards Content -->
-              <div class="flex justify-center mt-3">
-                <container class="bg-black rounded-2xl border border-2 border-gray-800 w-5/6 h-1/2 overflow-y-scroll">
+              <div class="flex justify-center mt-3 h-5/6">
+                <div class="bg-black rounded-2xl border border-2 border-gray-800 w-5/6 overflow-auto">
                   <div class="flex flex-wrap justify-center p-6 gap-6">
                     ${fileCards}
                   </div>
-                </container>
+                </div>
               </div>
-              <p class="text-center text-xl text-white hover:text-cyan-500 m-2">Cybermaster&Avict18</p>
             </div>
           </div>
+          <script>
+            const ctx = document.getElementById('fileStatsChart').getContext('2d');
+            const statsChart = new Chart(ctx, {
+              type: 'pie',
+              data: {
+                labels: ['Images', 'PDFs', 'Word Docs', 'PPTs', 'Others'],
+                datasets: [{
+                  data: [${stats.images}, ${stats.pdf}, ${stats.word}, ${stats.ppt}, ${stats.others}],
+                  backgroundColor: ['#4F7BEC', '#F44336', '#1976D2', '#26A69A', '#9E9E9E'],
+                }]
+              }
+            });
+          </script>
         </body>
       </html>
     `);
@@ -169,5 +214,5 @@ app.use((err, req, res, next) => {
 
 // Start the server
 app.listen(port, '192.168.8.45', () => {
-  console.log(`Server running at http://0.0.0.0:${port}`);
+  console.log(`Server running at http://192.168.8.45:${port}`);
 });
