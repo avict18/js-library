@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>File Upload</title>
+  <link href="http://192.168.8.45:3000/style.css" rel="stylesheet">
+</head>
+<body class="bg-black text-white flex items-center justify-center min-h-screen">
+  <div class="text-center bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-md">
+    <h1 class="text-3xl font-bold mb-6 text-cyan-400"><span class="text-blue-500">PMC</span> <span class="text-yellow-500">FAM</span></h1>
+    <form action="/upload" method="post" enctype="multipart/form-data" class="space-y-4">
+      <input type="file" name="file" required class="block w-full text-sm text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-cyan-500 file:text-white hover:file:bg-cyan-400 hover:file:font-bold">
+      <button type="submit" class="text-xl w-full py-2 px-4 bg-cyan-600 rounded-lg hover:bg-cyan-400 transition hover:font-bold">Upload</button>
+    </form>
+    <br>
+    <a href="/files" class="inline-block mt-4 text-cyan-400 hover:text-cyan-300">View Uploaded Files</a>
+  </div>
+</body>
+</html>
