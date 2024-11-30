@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const app = express();
 const port = 3000;
-
+  
 // Set up multer for file uploads
 const upload = multer({
   dest: 'uploads/', // Directory to store uploaded files
@@ -65,7 +65,7 @@ app.get('/files', (req, res) => {
     });
 
     const fileCards = files.map(file => {
-      const filePath = `/uploads/${file}`;
+      const filePath = `/uploads/${encodeURIComponent(file)}`;
       const fileType = path.extname(file).toLowerCase();
 
       let statusText = 'Unknown';
@@ -75,16 +75,16 @@ app.get('/files', (req, res) => {
         statusText = 'Image';
         statusColor = 'bg-blue-500';
       } else if (fileType === '.xlsx') {
-        statusText = 'Spreadsheet';
+        statusText = 'Excel';
         statusColor = 'bg-green-500';
       } else if (fileType === '.css') {
         statusText = 'CSS';
         statusColor = 'bg-cyan-500';
       } else if (fileType === '.js') {
-        statusText = 'JavaScript';
+        statusText = 'JS';
         statusColor = 'bg-yellow-500';
-      } else if (fileType === '.docx') {
-        statusText = 'Document';
+      } else if (fileType === '.docx' || fileType === '.doc') {
+        statusText = 'Word';
         statusColor = 'bg-blue-500';
       } else if (fileType === '.html') {
         statusText = 'HTML';
@@ -107,6 +107,27 @@ app.get('/files', (req, res) => {
       } else if (fileType === '.cpp') {
         statusText = 'CPP';
         statusColor = 'bg-blue-500';
+      } else if (fileType === '.py') {
+        statusText = 'Python';
+        statusColor = 'bg-yellow-500';
+      } else if (fileType === '.java') {
+        statusText = 'Java';
+        statusColor = 'bg-orange-500';
+      } else if (fileType === '.txt') {
+        statusText = 'Text';
+        statusColor = 'bg-gray-500';
+      } else if (fileType === '.mp3') {
+        statusText = 'Audio';
+        statusColor = 'bg-red-500';
+      } else if (fileType === '.mp4') {
+        statusText = 'Video';
+        statusColor = 'bg-red-500';
+      } else if (fileType === '.jpg') {
+        statusText = 'Image';
+        statusColor = 'bg-red-500';
+      } else if (fileType === '.csv'){
+        statusText = 'CSV';
+        statusColor = 'bg-green-500';
       }
 
       return `
@@ -137,15 +158,15 @@ app.get('/files', (req, res) => {
         <head>
           <meta charset="UTF-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <link href="http://192.168.8.45:3000/style.css" rel="stylesheet">
+          <link href="http://192.168.100.108:3000/style.css" rel="stylesheet">
+          <script src="http://192.168.100.108:3000/chart.min.js"></script>
           <title>CS Library</title>
-          <script src="http://192.168.8.45:3000/chart.min.js"></script>
         </head>
         <body class="bg-gray-900 min-h-screen overflow-auto">
           <div class="flex h-screen w-screen">
-            <aside class="bg-black h-screen overflow-hidden w-1/5 flex flex-col items-center p-4 text-white justify-between">
+            <aside class="bg-black h-screen overflow-hidden w-1/5 hidden md:flex md:flex-col items-center p-4 text-white justify-between hidden">
               <p class="text-3xl font-bold bg-gradient-to-r from-blue-500 via-purple-500 to-red-500 bg-clip-text text-transparent m-3">
-               CS Library
+                CS Library
               </p>
               <div>
                 <p class="text-3xl font-bold bg-gradient-to-r from-blue-500 via-purple-500 to-red-500 bg-clip-text text-transparent mb-2">Statistics</p>
@@ -177,7 +198,7 @@ app.get('/files', (req, res) => {
                 </p>
               </div>
               <div class="flex justify-center mt-3 h-5/6">
-                <div class="bg-black rounded-2xl border border-2 border-gray-800 w-5/6 overflow-auto">
+                <div class="bg-black rounded-2xl border-2 border-gray-800 w-5/6 overflow-auto">
                   <div class="flex flex-wrap justify-center p-6 gap-6">
                     ${fileCards}
                   </div>
@@ -204,15 +225,15 @@ app.get('/files', (req, res) => {
   });
 });
 
-// Serve uploaded files from the 'uploads' directory
-app.use('/uploads', express.static('uploads'));
-
-// Error handling middleware
-app.use((err, req, res, next) => {
-  res.status(400).send({ error: err.message });
-});
-
-// Start the server
-app.listen(port, '192.168.8.45', () => {
-  console.log(`Server running at http://192.168.8.45:${port}`);
-});
+  // Serve uploaded files from the 'uploads' directory
+  app.use('/uploads', express.static('uploads'));
+  
+  // Error handling middleware
+  app.use((err, req, res, next) => {
+    res.status(400).send({ error: err.message });
+  });
+  
+  // Start the server
+  app.listen(port, '192.168.100.108', () => {
+    console.log(`Server running at http://192.168.100.108:${port}`);
+  });
