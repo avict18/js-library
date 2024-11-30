@@ -139,7 +139,7 @@ app.get('/files', (req, res) => {
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <link href="http://192.168.8.45:3000/style.css" rel="stylesheet">
           <title>CS Library</title>
-          <script src="/node_modules/chart.js/dist/chart.min.js"></script>
+          <script src="http://192.168.8.45:3000/chart.min.js"></script>
         </head>
         <body class="bg-gray-900 min-h-screen overflow-auto">
           <div class="flex h-screen w-screen">
