@@ -115,7 +115,7 @@ app.get('/files', (req, res) => {
         statusColor = 'bg-orange-500';
       } else if (fileType === '.txt') {
         statusText = 'Text';
-        statusColor = 'bg-gray-500';
+        statusColor = 'bg-indigo-700';
       } else if (fileType === '.mp3') {
         statusText = 'Audio';
         statusColor = 'bg-red-500';
@@ -128,6 +128,18 @@ app.get('/files', (req, res) => {
       } else if (fileType === '.csv'){
         statusText = 'CSV';
         statusColor = 'bg-green-500';
+      } else if (fileType === '.json'){
+        statusText = 'JSON';
+        statusColor = 'bg-teal-600';
+      } else if (fileType === '.ico'){
+        statusText = 'ICO';
+        statusColor = 'bg-orange-500';
+      } else if (fileType === '.toc'){
+        statusText = 'TOC';
+        statusColor = 'bg-amber-700';
+      } else if (fileType === '.pkg'){
+        statusText = 'PKG';
+        statusColor = 'bg-purple-500';
       }
 
       return `
