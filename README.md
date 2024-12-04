@@ -29,7 +29,7 @@ This is a local hosted file transer system where one device acts a s a server in
 <h2 id="about-the-project"> Overview</h2>
 
 <p align="justify"> 
-You simply eneter the server's ip in any of the devices in the network and enjoy the library for free
+You simply enetr the server's ip in any of the devices in the network and enjoy the library for free
 
 ![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png)
 
