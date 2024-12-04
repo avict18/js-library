@@ -71,3 +71,4 @@ I would like to acknowledge some few friends for challenging me to do this:
 
 - **Jesse Charles** availiable on [**github**](https://github.com/shelby9014)
 - **Justice Simon** availiable on [**github**](https://github.com/jeel-code1)
+- **Kaiju** availiable on [**github**](https://github.com/anarky6)
