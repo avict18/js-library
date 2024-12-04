@@ -9,7 +9,7 @@
 <h2 id="about-the-project"> About The Project</h2>
 
 <p align="justify"> 
-This is a local hosted file transer system where one device acts a s a server in the local
+This is a local hosted file transer system where one device acts a s a server in the local network 
 
 ![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png)
 
