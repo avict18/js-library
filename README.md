@@ -53,6 +53,7 @@ You simply eneter the server's ip in any of the devices in the network and enjoy
 <p>For Windows</p>
 <pre><code>$ runsererver.bat</code></pre>
 
+<p>Make sure to change the IP addresses in the script to your machines IPv4 address</p>
 
 
 <!-- CREDITS -->
